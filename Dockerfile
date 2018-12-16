@@ -3,6 +3,7 @@ FROM php:7.3-fpm-alpine
 LABEL maintainer="tanangular@gmail.com"
 
 ENV COMPOSER_NO_INTERACTION=1
+ENV TIMEZONE=Asia/Bangkok
 ENV PHALCON_VERSION=3.4.2
 
 RUN set -ex \
@@ -36,10 +37,12 @@ RUN set -ex \
   --with-png-dir=/usr/include/ \
   --with-jpeg-dir=/usr/include/ \
   && docker-php-ext-install mbstring iconv gd soap zip intl pdo_pgsql \
-  && pecl install imagick redis swoole grpc \
-  && docker-php-ext-enable imagick redis swoole grpc \
+  && pecl install imagick redis \
+  && docker-php-ext-enable imagick redis \
   && rm -rf /tmp/pear \
-  && apk del freetype-dev libpng-dev libjpeg-turbo-dev autoconf g++ libtool make pcre-dev
+  && apk del freetype-dev libpng-dev libjpeg-turbo-dev autoconf g++ libtool make pcre-dev \
+  && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
+  && echo ${TIMEZONE} > /etc/timezone
 
 # Compile Phalcon
 RUN set -xe && \
