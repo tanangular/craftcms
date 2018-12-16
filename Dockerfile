@@ -35,8 +35,8 @@ RUN set -ex \
   --with-png-dir=/usr/include/ \
   --with-jpeg-dir=/usr/include/ \
   && docker-php-ext-install mbstring iconv gd soap zip intl pdo_pgsql \
-  && pecl install imagick redis \
-  && docker-php-ext-enable imagick redis \
+  && pecl install imagick redis swoole \
+  && docker-php-ext-enable imagick redis swoole \
   && rm -rf /tmp/pear \
   && apk del freetype-dev libpng-dev libjpeg-turbo-dev autoconf g++ libtool make pcre-dev
 
