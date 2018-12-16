@@ -3,6 +3,7 @@ FROM php:7.3-fpm-alpine
 LABEL maintainer="tanangular@gmail.com"
 
 ENV COMPOSER_NO_INTERACTION=1
+ENV PHALCON_VERSION=3.4.2
 
 RUN set -ex \
   && apk add --update --no-cache \
@@ -39,6 +40,13 @@ RUN set -ex \
   && docker-php-ext-enable imagick redis swoole grpc \
   && rm -rf /tmp/pear \
   && apk del freetype-dev libpng-dev libjpeg-turbo-dev autoconf g++ libtool make pcre-dev
+
+# Compile Phalcon
+RUN set -xe && \
+  curl -LO https://github.com/phalcon/cphalcon/archive/v${PHALCON_VERSION}.tar.gz && \
+  tar xzf v${PHALCON_VERSION}.tar.gz && cd cphalcon-${PHALCON_VERSION}/build && sh install && \
+  echo "extension=phalcon.so" > /usr/local/etc/php/conf.d/phalcon.ini && \
+  cd ../.. && rm -rf v${PHALCON_VERSION}.tar.gz cphalcon-${PHALCON_VERSION}
 
 RUN apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ --allow-untrusted
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
